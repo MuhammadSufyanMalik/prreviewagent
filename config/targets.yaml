@@ -1,0 +1,85 @@
+# PR Review Agent configuration.
+# Copy/edit this file and point CONFIG_PATH at it. Do NOT put secrets here:
+# tokens and API keys are read from environment variables named below.
+
+azure_devops:
+  # Base collection URL. For Azure DevOps Server (on-prem) this typically ends
+  # with the collection name, e.g. ".../DefaultCollection".
+  base_url: "https://dev.azure.company.local/DefaultCollection"
+  api_version: "7.1"
+  # Name of the environment variable that holds the PAT (never the PAT itself).
+  pat_env: "AZURE_DEVOPS_PAT"
+  # Network timeout (seconds) and retry count for transient API failures.
+  timeout_seconds: 30
+  max_retries: 3
+
+llm:
+  provider: "anthropic"
+  model: "claude-sonnet-4-6"
+  # Name of the environment variable that holds the API key.
+  api_key_env: "ANTHROPIC_API_KEY"
+  max_diff_chars: 120000
+  max_tokens: 4096
+  timeout_seconds: 120
+
+scheduler:
+  enabled: true
+  interval_seconds: 300
+
+review_policy:
+  # Safety-first defaults. Enable the booleans below only after testing.
+  dry_run: true
+  auto_comment: true
+  auto_approve: false
+  auto_complete: false
+
+  minimum_confidence_to_approve: 0.90
+  minimum_confidence_to_complete: 0.95
+
+  require_successful_build: true
+  require_successful_policy: true
+
+  max_changed_files: 50
+  max_diff_lines: 3000
+
+  allowed_target_branches:
+    - "refs/heads/develop"
+    - "refs/heads/main"
+
+  # Substrings matched (case-insensitive) against changed file paths. A match
+  # makes the agent more conservative (no auto-complete).
+  risky_paths:
+    - "appsettings.json"
+    - ".env"
+    - "Dockerfile"
+    - "docker-compose"
+    - "migrations"
+    - "auth"
+    - "authorization"
+    - "payment"
+    - "security"
+    - "Program.cs"
+    - "Startup.cs"
+
+  # One of: no_fast_forward, squash, rebase, rebase_merge
+  merge_strategy: "squash"
+  delete_source_branch_after_merge: false
+
+reviewer:
+  # The Azure DevOps identity (GUID) whose vote the agent casts. This must be
+  # the identity tied to the PAT, or one the PAT is allowed to vote on behalf of.
+  reviewer_id: "AZURE_DEVOPS_REVIEWER_ID_OR_GUID"
+
+targets:
+  - project: "ProjectA"
+    repository: "RepoA"
+    enabled: true
+    target_branches:
+      - "refs/heads/develop"
+      - "refs/heads/main"
+
+  - project: "ProjectB"
+    repository: "RepoB"
+    enabled: true
+    target_branches:
+      - "refs/heads/develop"
