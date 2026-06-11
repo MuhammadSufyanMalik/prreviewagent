@@ -8,6 +8,11 @@ completes (merges) them.
 Built with **FastAPI + APScheduler + SQLite + YAML**, talking to the **Azure
 DevOps REST API** directly (no MCP required for v1).
 
+> 📚 **Detailed, step-by-step documentation** lives in [`docs/`](docs/README.md) —
+> one file per topic (installation, PAT, configuration, architecture, the review
+> workflow, the decision policy, running, enabling actions, database,
+> troubleshooting, Docker, and testing). This README is the quick-start.
+
 ---
 
 ## 1. What the agent does
